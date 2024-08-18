@@ -1,0 +1,9 @@
+{{ service_user_home }}/log/GetMoarFediverse.log {
+    su {{ service_user }} {{ service_user }}
+    weekly
+    missingok
+    rotate 4
+    compress
+    copytruncate
+    compresscmd xz
+}

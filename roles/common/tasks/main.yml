@@ -1,0 +1,55 @@
+---
+- name: Set up sudo rules
+  community.general.sudoers:
+    name: sudo-group-nopasswd
+    state: present
+    group: sudo
+    runas: ALL
+    commands: ALL
+    nopassword: true
+
+- name: Install packages
+  ansible.builtin.package:
+    name:
+      - neovim
+    state: present
+
+- name: Select nvim as default vi/vim
+  community.general.alternatives:
+    name: '{{ item }}'
+    path: /usr/bin/nvim
+  loop:
+    - vi
+    - vim
+    - editor
+
+- name: Create {{ service_user }} user
+  ansible.builtin.user:
+    name: '{{ service_user }}'
+    comment: penfount service user
+    uid: 2000
+    shell: /bin/bash
+  register: user_details
+
+- name: Check if user is lingering
+  ansible.builtin.stat:
+    path: "/var/lib/systemd/linger/{{ service_user }}"
+  register: user_lingering
+
+- name: Enable lingering if needed
+  ansible.builtin.command: "loginctl enable-linger {{ service_user }}"
+  when:
+    - not user_lingering.stat.exists
+
+- name: Create directories in home directory
+  ansible.builtin.file:
+    path: '{{ service_user_home }}/{{ item }}'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: '0755'
+    state: directory
+  loop:
+    - .config
+    - log
+    - bin
+    - opt

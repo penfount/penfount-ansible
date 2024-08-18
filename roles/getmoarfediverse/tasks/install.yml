@@ -1,0 +1,9 @@
+---
+- name: Download and unpack binary
+  ansible.builtin.unarchive:
+    remote_src: yes
+    src: "{{ getmoarfediverse_dl_url }}"
+    dest: "{{ getmoarfediverse_root }}"
+    keep_newer: yes
+    extra_opts:
+    - --strip=1
