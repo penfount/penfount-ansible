@@ -1,0 +1,2 @@
+fedifetcher_root: '{{ service_user_home }}/opt/FediFetcher'
+fedifetcher_dl_url: https://github.com/nanos/FediFetcher/archive/refs/tags/v7.1.6.tar.gz

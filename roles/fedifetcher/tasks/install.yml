@@ -1,0 +1,45 @@
+---
+- name: Download and unpack package
+  ansible.builtin.unarchive:
+    remote_src: yes
+    src: "{{ fedifetcher_dl_url }}"
+    dest: "{{ fedifetcher_root }}"
+    extra_opts:
+    - --strip=1
+
+- name: Reset permissions
+  ansible.builtin.file:
+    path: "{{ fedifetcher_root }}"
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: 0755
+    recurse: yes
+
+- name: Create virtual environment
+  become: true
+  become_user: '{{ service_user }}'
+  when: 
+  ansible.builtin.shell:
+    chdir: '{{ fedifetcher_root }}'
+    cmd: 'python3 -m venv {{ fedifetcher_root }}/.venv'
+
+- name: Pull pip requirements
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ fedifetcher_root }}'
+    cmd: '{{ fedifetcher_root }}/.venv/bin/pip install -r requirements.txt'
+
+- name: Do initial run
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ fedifetcher_root }}'
+    cmd: nohup {{ fedifetcher_root }}/.venv/bin/python {{ fedifetcher_root }}/find_posts.py -c {{ service_user_config }}/FediFetcher/config.json >> {{ service_user_home }}/log/FediFetcher.log 2>&1 &
+
+- name: install done
+  ansible.builtin.file:
+    path: '{{ fedifetcher_root }}/install_done'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    state: touch

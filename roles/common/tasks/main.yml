@@ -12,6 +12,8 @@
   ansible.builtin.package:
     name:
       - neovim
+      - acl           # needed for running ansible tasks as unprivileged users
+      - python3-venv  # needed for FediFetcher and feed2toot
     state: present
 
 - name: Select nvim as default vi/vim
