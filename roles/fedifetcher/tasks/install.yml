@@ -12,13 +12,11 @@
     path: "{{ fedifetcher_root }}"
     owner: '{{ service_user }}'
     group: '{{ service_user }}'
-    mode: 0755
     recurse: yes
 
 - name: Create virtual environment
   become: true
   become_user: '{{ service_user }}'
-  when: 
   ansible.builtin.shell:
     chdir: '{{ fedifetcher_root }}'
     cmd: 'python3 -m venv {{ fedifetcher_root }}/.venv'

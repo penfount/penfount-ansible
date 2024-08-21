@@ -7,3 +7,10 @@
     keep_newer: yes
     extra_opts:
     - --strip=1
+
+- name: Reset permissions
+  ansible.builtin.file:
+    path: "{{ getmoarfediverse_root }}"
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    recurse: yes
