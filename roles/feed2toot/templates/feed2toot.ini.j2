@@ -1,0 +1,17 @@
+[mastodon]
+instance_url={{ mastodon_server }}
+user_credentials={{ service_user_config }}/feed2toot/feed2toot_usercred.txt
+client_credentials={{ service_user_config }}/feed2toot/feed2toot_clientcred.txt
+; Default visibility is public, but you can override it:
+; toot_visibility=unlisted
+
+[cache]
+cachefile={{ service_user_config }}/feed2toot/cache.db
+cache_limit=4000
+
+[rss]
+uri_list={{ service_user_config }}/feed2toot/rsslist.txt
+toot={feedname} posted: {title} {link} #FountainPen
+
+[hashtaglist]
+several_words_hashtags_list={{ service_user_config }}/feed2toot/hashtags.txt

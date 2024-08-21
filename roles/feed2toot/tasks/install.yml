@@ -1,0 +1,65 @@
+---
+- name: Download and unpack package
+  ansible.builtin.unarchive:
+    remote_src: yes
+    src: "{{ feed2toot_dl_url }}"
+    dest: "{{ feed2toot_root }}"
+    extra_opts:
+    - --strip=1
+
+- name: Reset permissions
+  ansible.builtin.file:
+    path: "{{ feed2toot_root }}"
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    recurse: yes
+
+# This patch is needed to run feed2toot on python >=3.11
+- name: Place patch
+  ansible.builtin.copy:
+    src: confparse.patch
+    dest: "{{ feed2toot_root }}/confparse.patch"
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+
+- name: Run patch
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ feed2toot_root }}'
+    cmd: 'patch feed2toot/confparse.py confparse.patch'
+
+- name: Create virtual environment
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ feed2toot_root }}'
+    cmd: 'python3 -m venv {{ feed2toot_root }}/.venv'
+
+- name: install setuptools
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ feed2toot_root }}'
+    cmd: '{{ feed2toot_root }}/.venv/bin/pip install setuptools'
+
+- name: Run setup script
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ feed2toot_root }}'
+    cmd: '{{ feed2toot_root }}/.venv/bin/python setup.py install'
+
+- name: Do initial run to populate the cache
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.shell:
+    chdir: '{{ feed2toot_root }}'
+    cmd: '{{ feed2toot_root }}/.venv/bin/feed2toot --populate-cache --debug -c {{ service_user_config }}/feed2toot/feed2toot.ini >> {{ service_user_home }}/log/feed2toot.log 2>&1 &'
+
+- name: install done
+  ansible.builtin.file:
+    path: '{{ feed2toot_root }}/install_done'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    state: touch

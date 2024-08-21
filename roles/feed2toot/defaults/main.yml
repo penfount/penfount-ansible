@@ -1,0 +1,2 @@
+feed2toot_root: '{{ service_user_home }}/opt/feed2toot'
+feed2toot_dl_url: https://gitlab.com/chaica/feed2toot/-/archive/0.17/feed2toot-0.17.tar.gz
