@@ -1,0 +1,11 @@
+staging:
+  hosts:
+    penfount.myhosting.test:
+  vars:
+    fakerelay_api_key: FAKERELAY_API_KEY
+    mastodon_server: penfount.social
+    fedifetcher_access_token: ACCESS_TOKEN
+    feed2toot_credentials:
+      access_token: ACCESS_TOKEN
+      client_id: CLIENT_ID
+      client_secret: CLIENT_SECRET
