@@ -1,0 +1,17 @@
+---
+- name: Download and unpack package
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.unarchive:
+    remote_src: yes
+    src: "{{ followbot_dl_url }}"
+    dest: "{{ followbot_bin }}"
+    include:
+      - MastodonFollowBot
+
+- name: Reset permissions
+  ansible.builtin.file:
+    path: "{{ followbot_bin }}/MastodonFollowBot"
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: 0755

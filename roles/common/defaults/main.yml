@@ -1,3 +1,4 @@
 service_user: penfount
 service_user_home: /home/penfount
 service_user_config: /home/penfount/.config
+service_user_uid: 2000

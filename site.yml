@@ -3,8 +3,8 @@
   become: yes
   roles:
     - common
-#    - boostbot
-#    - followbot
+    - boostbot
+    - followbot
     - getmoarfediverse
     - fedifetcher
     - feed2toot

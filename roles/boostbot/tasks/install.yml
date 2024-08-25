@@ -1,0 +1,17 @@
+---
+- name: Download and unpack package
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.unarchive:
+    remote_src: yes
+    src: "{{ boostbot_dl_url }}"
+    dest: "{{ boostbot_bin }}"
+    include:
+      - MastodonBoostBot
+
+- name: Reset permissions
+  ansible.builtin.file:
+    path: "{{ boostbot_bin }}/MastodonBoostBot"
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: 0755

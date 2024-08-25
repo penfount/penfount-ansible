@@ -1,0 +1,3 @@
+followbot_bin: '{{ service_user_home }}/bin'
+followbot_version: v0.18
+followbot_dl_url: https://github.com/penfount/MastodonFollowBot/releases/download/{{ followbot_version }}/MastodonFollowBot_linux-{{ "amd64" if ansible_architecture == "x86_64" else ansible_architecture }}.tar.gz

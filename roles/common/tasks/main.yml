@@ -29,7 +29,7 @@
   ansible.builtin.user:
     name: '{{ service_user }}'
     comment: penfount service user
-    uid: 2000
+    uid: '{{ service_user_uid }}'
     shell: /bin/bash
   register: user_details
 

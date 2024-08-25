@@ -1,0 +1,61 @@
+---
+- name: Ensure install directory present
+  ansible.builtin.file:
+    path: '{{ boostbot_bin }}'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: 0755
+    state: directory
+
+- name: Make config directory
+  ansible.builtin.file:
+    path: '{{ service_user_config }}/MastodonBoostBot'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: 0755
+    state: directory
+
+- name: Write out config file
+  ansible.builtin.template:
+    src: config.env.j2
+    dest: '{{ service_user_config }}/MastodonBoostBot/config.env'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+
+- name: Check if already installed
+  ansible.builtin.stat:
+    path: '{{ boostbot_bin }}/MastodonBoostBot'
+  register: ff_stat_result
+
+- name: Download and install if not present
+  when: not ff_stat_result.stat.exists
+  ansible.builtin.include_tasks: install.yml
+
+- name: Create systemd user units directory
+  ansible.builtin.file:
+    path: '{{ service_user_home }}/.local/share/systemd/user'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: 0755
+    state: directory
+
+- name: Create systemd unit
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.copy:
+    src: MastodonBoostBot.service
+    dest: '{{ service_user_home }}/.local/share/systemd/user/MastodonBoostBot.service'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+  notify:
+    - user systemd daemon-reload
+
+- name: Set up systemd service
+  become: true
+  become_user: '{{ service_user }}'
+  ansible.builtin.systemd_service:
+    name: MastodonBoostBot
+    enabled: true
+    scope: user
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ service_user_uid }}"
