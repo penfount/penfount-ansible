@@ -1,4 +1,4 @@
 getmorefediverse_version: v1.0.59
-getmoarfediverse_dl_url: https://github.com/g3rv4/GetMoarFediverse/releases/download/{{ getmorefediverse_version }}/GetMoarFediverse_linux-{{ "x64" if ansible_architecture == "x86_64" else ansible_architecture }}.tgz
+getmoarfediverse_dl_url: https://github.com/g3rv4/GetMoarFediverse/releases/download/{{ getmorefediverse_version }}/GetMoarFediverse_linux-{{ "x64" if ansible_architecture == "x86_64" else "arm64" if ansible_architecture == "aarch64" else ansible_architecture }}.tgz
 getmoarfediverse_root: '{{ service_user_home }}/opt/GetMoarFediverse'
 fakerelay_url: https://fakerelay.gervas.io
