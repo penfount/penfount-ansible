@@ -55,3 +55,11 @@
     - log
     - bin
     - opt
+
+- name: Setup bashrc for systemctl
+  ansible.builtin.copy:
+    src: bashrc
+    dest: '{{ service_user_home }}/.bashrc'
+    owner: '{{ service_user }}'
+    group: '{{ service_user }}'
+    mode: '0644'
